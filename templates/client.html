@@ -3,15 +3,33 @@
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+
+
+function poll() {
+  setTimeout(function () {
+     GetData();
+  }, 1000);
+}
+
 $(document).ready(function(){
   $("button").click(function(){
-    $.ajax({url: "/ajax/", success: function(result){
+    $.ajax({
+        
+        url: "/ajax/",   
+        success: function(result){
+            $("#points").html(result);
+    }, 
+        complete: function() {
+            poll();
+        },
+        
+        timeout: 5,
 
-      $("#points").html(result);
-
-    }});
+});
   });
 });
+
+poll();
 </script>
 </head>
 <body>
