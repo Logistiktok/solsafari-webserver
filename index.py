@@ -1,6 +1,8 @@
 from flask import Flask
 from flask import request
 from flask import render_template
+from flask import Response
+import json
 
 
 hits = 0
@@ -27,9 +29,12 @@ def reset():
     return "Ok"
 
 @app.route('/rounds/', methods=['POST'])
-def reset():
+def save_rounds():
     global rounds
-    return rounds
+    print(rounds)
+
+    dict = {"rounds": rounds}
+    return Response(json.dumps(dict),  mimetype='application/json')
 
 @app.route('/client/')
 def client():
@@ -37,7 +42,7 @@ def client():
 
 
 @app.route('/client')
-def client3():
+def client2():
     return render_template('client.html')
 
 @app.route('/point/', methods=['GET', 'POST'])

@@ -50,9 +50,48 @@
             reset();
             let points = $("#points").text(); // Get inner text aka points
             $("#points").html("0");
-            //$("#old_points").append('<div class="container has-background-info-light p-1 m-3" style="text-align: center;"> Round: ' + index + ' - Points: ' + points + '</div>');
             
             //index++; // Start next round
+        }
+
+        function write_old_points(list) {
+            
+            let liste = list["rounds"];
+
+            let index = 1;
+            liste.forEach(element => {
+                add_round_element(index, element);
+                index++;
+            });
+
+        }
+
+        function add_round_element(index, value) {
+
+            let root_element = document.createElement('div');
+            root_element.className = 'columns is-centered';
+
+            const left = document.createElement('span');
+            left.className = 'column is-narrow';
+            const left_content = document.createTextNode('Round: ' + index);
+            left.appendChild(left_content);
+
+            const column = document.createElement('div');
+            column.className = 'column has-background-grey-lighter m-2';
+            
+            const span = document.createElement('div');
+            span.style.cssText = 'text-align: center; display: flex;';
+            column.appendChild(span);
+
+            const center_content = document.createTextNode('Points: ' + value);
+            span.appendChild(center_content);
+
+            //root_element.appendChild(left);
+
+            root_element.appendChild(column);
+
+            $("#old_points").append(root_element);
+
         }
 
         $(document).ready(function(){
@@ -62,11 +101,11 @@
                 new_round();
             });
 
-            $.ajax({
+            $.post({
                 
-                url: "/reset/",   
+                url: "/rounds/",   
                 success: function(result){
-                    $("#old_points").html(result);
+                    write_old_points(result);
             }, 
                 complete: function() {
                     poll();
@@ -82,7 +121,7 @@
 <body>
 
 
-    <div class="columns  is-desktop is-mobile is-centered">
+    <div class="columns is-desktop is-mobile is-centered">
         <div class="column is-half-desktop is-two-thirds-tablet is-two-thirds-mobile">
 
             <div class="container has-background-info-light	p-6 m-3" style="text-align: center;">
@@ -96,7 +135,7 @@
                     Start ny runde
                 </a>
             </div>
-            <div id="old_points">
+            <div class="container p-6 m-3" id="old_points">
 
             </div>
     </div>
