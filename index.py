@@ -16,6 +16,12 @@ def ajax():
     global hits
     return str(hits)
 
+@app.route('/reset/', methods=['GET', 'POST'])
+def reset():
+    global hits
+    hits = 0
+    return "Ok"
+
 @app.route('/client/')
 def client():
     return render_template('client.html')
