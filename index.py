@@ -19,7 +19,7 @@ def point():
         req = request.get_json()
         hits = hits + req["hits"]
         print(hits)
-        return "Tak for point"
+        return "OK"
     else:
         point = 0
         return render_template('point.html', point=hits)
