@@ -4,6 +4,8 @@ from flask import render_template
 
 
 hits = 0
+rounds = []
+
 
 app = Flask(__name__)
 
@@ -19,8 +21,15 @@ def ajax():
 @app.route('/reset/', methods=['GET', 'POST'])
 def reset():
     global hits
+    global rounds
+    rounds.append(hits)
     hits = 0
     return "Ok"
+
+@app.route('/rounds/', methods=['POST'])
+def reset():
+    global rounds
+    return rounds
 
 @app.route('/client/')
 def client():

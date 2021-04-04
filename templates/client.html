@@ -10,8 +10,6 @@
     
     <script>
 
-        let index = 1;
-
         function poll() {
         setTimeout(function () {
             ajax();
@@ -43,7 +41,7 @@
                 complete: function() {
                     poll();
                 },
-                
+
                 timeout: 0,
             });
         }
@@ -52,16 +50,30 @@
             reset();
             let points = $("#points").text(); // Get inner text aka points
             $("#points").html("0");
-            $("#old_points").append('<div class="container has-background-info-light p-1 m-3" style="text-align: center;"> Round: ' + index + ' - Points: ' + points + '</div>');
-            index++;
+            //$("#old_points").append('<div class="container has-background-info-light p-1 m-3" style="text-align: center;"> Round: ' + index + ' - Points: ' + points + '</div>');
+            
+            //index++; // Start next round
         }
 
         $(document).ready(function(){
-        poll();
+            poll();
 
-        $( "#new_round" ).click(function() {
-            new_round();
-        });
+            $( "#new_round" ).click(function() {
+                new_round();
+            });
+
+            $.ajax({
+                
+                url: "/reset/",   
+                success: function(result){
+                    $("#old_points").html(result);
+            }, 
+                complete: function() {
+                    poll();
+                },
+                
+                timeout: 0,
+            });
         
         });
     </script>
