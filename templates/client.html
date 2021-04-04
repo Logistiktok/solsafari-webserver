@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("button").click(function(){
+    $.ajax({url: "/ajax/", success: function(result){
+
+      $("#points").html(result);
+
+    }});
+  });
+});
+</script>
+</head>
+<body>
+<dic class="wrapper">
+    <div class="inner_content">
+        <div><h2 id="points"></h2></div>
+        <button></button>
+    </div>  
+
+</div>
+<button>Get External Content</button>
+
+</body>
+</html>

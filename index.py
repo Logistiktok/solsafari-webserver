@@ -11,6 +11,19 @@ app = Flask(__name__)
 def hello_world():
     return 'Hello, World!'
 
+@app.route('/ajax/', methods=['GET', 'POST'])
+def ajax():
+    global hits
+    return str(hits)
+
+@app.route('/client/')
+def client():
+    return render_template('client.html')
+
+
+@app.route('/client')
+def client3():
+    return render_template('client.html')
 
 @app.route('/point/', methods=['GET', 'POST'])
 def point():
