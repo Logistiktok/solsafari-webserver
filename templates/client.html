@@ -134,9 +134,12 @@
             if(isPaused) {
                 $('#play_pause').addClass('is-warning');
                 $('#play_pause').removeClass('is-success');
+                $('#play_pause').html("Start pointtælling");
             } else {
                 $('#play_pause').addClass('is-success');
                 $('#play_pause').removeClass('is-warning');
+                $('#play_pause').html("Pausér pointtælling");
+
             }
         }
 
