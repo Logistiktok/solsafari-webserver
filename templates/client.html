@@ -71,22 +71,25 @@
             let root_element = document.createElement('div');
             root_element.className = 'columns is-centered';
 
-            const left = document.createElement('span');
-            left.className = 'column is-narrow';
+            const left_span = document.createElement('span');
+            left_span.className = 'is-one-third';
+            left_span.style.cssText = 'display: flex;';
+
             const left_content = document.createTextNode('Round: ' + index);
-            left.appendChild(left_content);
+            left_span.appendChild(left_content);
 
             const column = document.createElement('div');
             column.className = 'column has-background-grey-lighter m-2';
             
             const span = document.createElement('div');
-            span.style.cssText = 'text-align: center; display: flex;';
+            span.style.cssText = 'text-align: center;';
+            span.className = '';
+            column.appendChild(left_span);
+
             column.appendChild(span);
 
             const center_content = document.createTextNode('Points: ' + value);
             span.appendChild(center_content);
-
-            //root_element.appendChild(left);
 
             root_element.appendChild(column);
 
