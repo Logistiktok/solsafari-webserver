@@ -59,7 +59,8 @@ def assig_points():
     global point
     if request.method == 'POST':
         req = request.get_json()
-        point = point + req["hits"]
+        if not is_paused_state:
+            point = point + req["hits"]
         print(point)
         return "OK"
     else:
