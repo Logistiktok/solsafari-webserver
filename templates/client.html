@@ -37,7 +37,13 @@
 
         function reset(){
             $.ajax({             
-                url: "/reset/",   
+                url: "/reset/", 
+                success: (result) => {
+                    add_round_element(index, $("#points").html());
+                    $("#points").html("0");
+                    $("#runde_counter").html(index);
+                    index ++;
+                }, 
                 timeout: 0,
             });
         }
@@ -45,7 +51,6 @@
         function new_round(){
             reset();
             let points = $("#points").text(); // Get inner text aka points
-            $("#points").html("0");
             
             //index++; // Start next round
         }
@@ -86,13 +91,11 @@
 
             center_column.style.cssText = 'text-align:center;';
 
-
-
             columns.appendChild(left_column);
             columns.appendChild(center_column);
             columns.appendChild(right_column);
 
-            $("#old_points").append(columns);
+            $("#old_points").prepend(columns);
 
         }
 
