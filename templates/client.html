@@ -17,9 +17,9 @@
         let isPaused = {% if state %} true {% else %} false {% endif %};
 
         function poll() {
-        setTimeout(function () {
-            ajax();
-        }, 1000);
+            setTimeout(() => {
+                ajax();
+            }, 1000);
         }
 
         function ajax(){
@@ -31,11 +31,22 @@
                     let state = result["state"];
                     let old_points = $("#points").html();
 
-                    if(old_points > 0 && point === 0) {
+                    if(point > 0) { //enable round button if there is points
+                        $("#new_round").attr("disabled", false); // enabled
+                    } else {
+                        $("#new_round").attr("disabled", true); // disabled
+                    }
+
+                    /* the points have changed to zero on the server, 
+                    it must be a new round so we addd it to the list 
+                    before we update */
+                    if(old_points > 0 && point === 0) { 
                         add_round_element(round_number, old_points);
                     }
+
+                    // if state from server is not state in app
                     if(state != isPaused) {
-                        isPaused = state;
+                        isPaused = state; //update app state
                         update_play_button_ui();
                     }
 
@@ -45,7 +56,7 @@
 
             }, 
                 complete: function() {
-                    poll();
+                    poll(); // start a new request when old complete
                 },
                 
                 timeout: 0,
@@ -58,6 +69,7 @@
                 success: (result) => {
                     add_round_element(round_number, $("#points").html());
                     $("#points").html("0");
+                    $("#new_round").attr("disabled", true); // button disabled
                     round_number ++;
                     $("#runde_counter").html(round_number);
                 }, 
@@ -146,11 +158,9 @@
         $(document).ready(function(){
             poll();
 
-            $("#new_round" ).click(function() {
-                if($("#points").html() !== '0') {
+            $("#new_round").click(function() {
+                if($("#points").html() !== '0') { //
                     new_round(); 
-                    alert('updated');
-
                 }
             });
 
@@ -192,7 +202,7 @@
                 <a id="play_pause" style="text-align:center;" class="button is-success is-fullwidth mb-2 p-6">
                     Start
                 </a>                
-                <a id="new_round" style="text-align:center;" class="button is-info p-5">
+                <a id="new_round" style="text-align:center;" class="button is-info p-5 disabled">
                     Ny Runde
                 </a>
                 <h3 class="is-size-7 mt-5 has-text-grey">Nuværende runde: <span id="runde_counter">{{index_number}}</span></h3>
