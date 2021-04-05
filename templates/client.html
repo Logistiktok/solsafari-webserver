@@ -68,32 +68,36 @@
 
         function add_round_element(index, value) {
 
-            let root_element = document.createElement('div');
-            root_element.className = 'columns is-centered';
+            let columns = document.createElement('div');
+            columns.className = 'columns is-mobile is-cqentered has-background-info-light mx-0 my-3' ;
 
-            const left_span = document.createElement('span');
-            left_span.className = 'is-one-third';
-            left_span.style.cssText = 'display: flex;';
+            let center_column = document.createElement('div');
+            center_column.className = 'column is-half  px-0 mx-0'; //half = 6
 
-            const left_content = document.createTextNode('Round: ' + index);
-            left_span.appendChild(left_content);
+            let left_column = document.createElement('div');
+            left_column.className = 'column is-3 px-3  mx-0'
 
-            const column = document.createElement('div');
-            column.className = 'column has-background-grey-lighter m-2';
-            
-            const span = document.createElement('div');
-            span.style.cssText = 'text-align: center;';
-            span.className = '';
-            column.appendChild(left_span);
+            let right_column = document.createElement('div');
+            right_column.className = 'column px-0  mx-0'
 
-            column.appendChild(span);
+            const left_content = document.createTextNode('Runde ' + index);
+            const center_content = document.createTextNode(value);
 
-            const center_content = document.createTextNode('Points: ' + value);
-            span.appendChild(center_content);
+            center_column.appendChild(center_content);
+            left_column.appendChild(left_content);
 
-            root_element.appendChild(column);
+            //column.className = 'column has-background-grey-lighter m-2';
+            //span.style.cssText = 'text-align: center;';
 
-            $("#old_points").append(root_element);
+            center_column.style.cssText = 'text-align:center;';
+
+
+
+            columns.appendChild(left_column);
+            columns.appendChild(center_column);
+            columns.appendChild(right_column);
+
+            $("#old_points").append(columns);
 
         }
 
@@ -125,22 +129,20 @@
 
 
     <div class="columns is-desktop is-mobile is-centered">
-        <div class="column is-half-desktop is-two-thirds-tablet is-two-thirds-mobile">
-
-            <div class="container has-background-info-light	p-6 m-3" style="text-align: center;">
+        <div class="column is-half-desktop is-two-thirds-tablet is-11-mobile is-two-thirds-mobile">
+            <div class="container has-background-info-light p-6 my-3" style="text-align: center;">
                 <h1 class="my-3">
                     Point indsamlet i denne runde
                 </h1>
                 <div class="inner_content">
-                    <div class="my-5"><h2 id="points"></h2></div>
+                    <div class="is-size-1 my-5"><h2 id="points">0</h2></div>
                 </div>
                 <a id="new_round" class="button is-primary">
                     Start ny runde
                 </a>
             </div>
-            <div class="container p-6 m-3" id="old_points">
-
-            </div>
+            <div class="container" id="old_points"></div>
+        </div>
     </div>
 
 
