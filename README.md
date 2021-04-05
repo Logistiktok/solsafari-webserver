@@ -2,6 +2,7 @@ The webserver for the SolSafari IRGame activity
 
 Run with start_server.sh, which will also install requirements using pip.
 
+. Alternatively: .
 
 Remember to start your virtual encironment beforehandby running
 `. venv/bin/activate`

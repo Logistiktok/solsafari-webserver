@@ -48,7 +48,7 @@ def statechange():
     is_paused_state = state
     return "ok"
 
-@app.route('/client')
+@app.route('/app')
 def client():
     global current_round_number
     return render_template('client.html', index_number=current_round_number, point=point, state=is_paused_state)
