@@ -30,7 +30,7 @@
                     let old_points = $("#points").html();
 
                     if(old_points > 0 && point === 0) {
-                        alert("New");
+                        add_round_element(round_number, old_points);
                     }
 
                     $("#points").html(point);
