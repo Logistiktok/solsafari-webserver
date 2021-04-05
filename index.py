@@ -20,15 +20,14 @@ def hello_world():
 
 @app.route('/ajax', methods=['GET', 'POST'])
 def ajax():
-    global point
-    return str(point)
+    global point, current_round_number
+    data = {"point": point, "rounds": current_round_number}
+    return Response(json.dumps(data),  mimetype='application/json')
 
 @app.route('/reset', methods=['GET', 'POST'])
 def reset():
-    global point
-    global rounds
-    global current_round_number
-    current_round_number += current_round_number
+    global point, rounds, current_round_number
+    current_round_number += 1
     rounds.append(point)
     point = 0
     return "Ok"

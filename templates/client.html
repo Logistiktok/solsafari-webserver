@@ -13,7 +13,7 @@
     <script>
 
 
-        let index = 1;
+        let round_number = {{index_number}};
 
         function poll() {
         setTimeout(function () {
@@ -25,7 +25,18 @@
             $.ajax({
                 url: "/ajax/",   
                 success: function(result){
-                    $("#points").html(result);
+                    let point = result["point"];
+                    let rounds = result["rounds"];
+                    let old_points = $("#points").html();
+
+                    if(old_points > 0 && point === 0) {
+                        alert("New");
+                    }
+
+                    $("#points").html(point);
+                    $("#runde_counter").html(rounds);
+                    round_number = rounds;
+
             }, 
                 complete: function() {
                     poll();
@@ -39,26 +50,24 @@
             $.ajax({             
                 url: "/reset/", 
                 success: (result) => {
-                    add_round_element(index, $("#points").html());
+                    add_round_element(round_number, $("#points").html());
                     $("#points").html("0");
-                    $("#runde_counter").html(index);
-                    index ++;
+                    round_number ++;
+                    $("#runde_counter").html(round_number);
                 }, 
                 timeout: 0,
             });
         }
 
         function new_round(){
-            reset();
-            let points = $("#points").text(); // Get inner text aka points
-            
-            //index++; // Start next round
+            reset(); 
         }
 
         function write_old_points(list) {
             
             let liste = list["rounds"];
 
+            let index = 1;
             liste.forEach(element => {
                 add_round_element(index, element);
                 index++;
