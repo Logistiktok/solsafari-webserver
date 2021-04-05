@@ -14,6 +14,7 @@
 
 
         let round_number = {{index_number}};
+        let isPaused = {% if state %} true {% else %} false {% endif %};
 
         function poll() {
         setTimeout(function () {
@@ -27,10 +28,15 @@
                 success: function(result){
                     let point = result["point"];
                     let rounds = result["rounds"];
+                    let state = result["state"];
                     let old_points = $("#points").html();
 
                     if(old_points > 0 && point === 0) {
                         add_round_element(round_number, old_points);
+                    }
+                    if(state != isPaused) {
+                        isPaused = state;
+                        update_play_button_ui();
                     }
 
                     $("#points").html(point);
@@ -108,11 +114,41 @@
 
         }
 
+        function toggl_play_pause() {
+
+            $.post({
+                url: "/statechange",
+                data: JSON.stringify({state: !isPaused}),
+                contentType: 'application/json',
+                success: () => {
+                    isPaused = !isPaused;
+                    update_play_button_ui(); 
+                }
+            }).fail(() => {
+            });
+
+            
+        }
+
+        function update_play_button_ui() {
+            if(isPaused) {
+                $('#play_pause').addClass('is-warning');
+                $('#play_pause').removeClass('is-success');
+            } else {
+                $('#play_pause').addClass('is-success');
+                $('#play_pause').removeClass('is-warning');
+            }
+        }
+
         $(document).ready(function(){
             poll();
 
-            $( "#new_round" ).click(function() {
+            $("#new_round" ).click(function() {
                 new_round();
+            });
+
+            $("#play_pause").click(() => {
+                toggl_play_pause();
             });
 
             $.post({
@@ -127,6 +163,8 @@
                 
                 timeout: 0,
             });
+
+            update_play_button_ui();
         
         });
     </script>
@@ -144,8 +182,11 @@
                 <div class="inner_content">
                     <div class="is-size-1 my-5"><h2 id="points">{{point}}</h2></div>
                 </div>
-                <a id="new_round" class="button is-primary">
-                    Start ny runde
+                <a id="play_pause" style="text-align:center;" class="button is-success is-fullwidth mb-2 p-6">
+                    Start
+                </a>                
+                <a id="new_round" style="text-align:center;" class="button is-info p-5">
+                    Ny Runde
                 </a>
                 <h3 class="is-size-7 mt-5 has-text-grey">Nuværende runde: <span id="runde_counter">{{index_number}}</span></h3>
 

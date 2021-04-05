@@ -8,6 +8,7 @@ import json
 point = 0
 rounds = []
 current_round_number = 1;
+is_paused_state = False;
 
 
 app = Flask(__name__)
@@ -21,7 +22,7 @@ def hello_world():
 @app.route('/ajax', methods=['GET', 'POST'])
 def ajax():
     global point, current_round_number
-    data = {"point": point, "rounds": current_round_number}
+    data = {"point": point, "rounds": current_round_number, "state": is_paused_state}
     return Response(json.dumps(data),  mimetype='application/json')
 
 @app.route('/reset', methods=['GET', 'POST'])
@@ -39,10 +40,18 @@ def save_rounds():
     dict = {"rounds": rounds}
     return Response(json.dumps(dict),  mimetype='application/json')
 
+@app.route('/statechange', methods=['POST'])
+def statechange():
+    global is_paused_state
+    json_data = request.get_json()
+    state = json_data['state']
+    is_paused_state = state
+    return "ok"
+
 @app.route('/client')
 def client():
     global current_round_number
-    return render_template('client.html', index_number=current_round_number, point=point)
+    return render_template('client.html', index_number=current_round_number, point=point, state=is_paused_state)
 
 
 @app.route('/point', methods=['GET', 'POST'])
