@@ -5,7 +5,7 @@ from flask import Response
 import json
 
 
-hits = 0
+point = 0
 rounds = []
 current_round_number = 1;
 
@@ -20,17 +20,17 @@ def hello_world():
 
 @app.route('/ajax', methods=['GET', 'POST'])
 def ajax():
-    global hits
-    return str(hits)
+    global point
+    return str(point)
 
 @app.route('/reset', methods=['GET', 'POST'])
 def reset():
-    global hits
+    global point
     global rounds
     global current_round_number
     current_round_number += current_round_number
-    rounds.append(hits)
-    hits = 0
+    rounds.append(point)
+    point = 0
     return "Ok"
 
 @app.route('/rounds', methods=['POST'])
@@ -43,17 +43,17 @@ def save_rounds():
 @app.route('/client')
 def client():
     global current_round_number
-    return render_template('client.html', index_number=current_round_number)
+    return render_template('client.html', index_number=current_round_number, point=point)
 
 
 @app.route('/point', methods=['GET', 'POST'])
-def point():
-    global hits
+def assig_points():
+    global point
     if request.method == 'POST':
         req = request.get_json()
-        hits = hits + req["hits"]
-        print(hits)
+        point = point + req["hits"]
+        print(point)
         return "OK"
     else:
         point = 0
-        return render_template('point.html', point=hits)
+        return render_template('point.html', point=point)
