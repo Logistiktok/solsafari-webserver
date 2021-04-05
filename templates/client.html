@@ -147,7 +147,11 @@
             poll();
 
             $("#new_round" ).click(function() {
-                new_round();
+                if($("#points").html() !== '0') {
+                    new_round(); 
+                    alert('updated');
+
+                }
             });
 
             $("#play_pause").click(() => {
