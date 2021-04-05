@@ -10,6 +10,9 @@
     
     <script>
 
+
+        let index = 1;
+
         function poll() {
         setTimeout(function () {
             ajax();
@@ -18,7 +21,6 @@
 
         function ajax(){
             $.ajax({
-                
                 url: "/ajax/",   
                 success: function(result){
                     $("#points").html(result);
@@ -35,13 +37,6 @@
             $.ajax({
                 
                 url: "/reset/",   
-                success: function(result){
-                    $("#points").html(result);
-            }, 
-                complete: function() {
-                    poll();
-                },
-
                 timeout: 0,
             });
         }
@@ -58,7 +53,6 @@
             
             let liste = list["rounds"];
 
-            let index = 1;
             liste.forEach(element => {
                 add_round_element(index, element);
                 index++;
@@ -69,7 +63,7 @@
         function add_round_element(index, value) {
 
             let columns = document.createElement('div');
-            columns.className = 'columns is-mobile is-cqentered has-background-grey-lighter mx-0 my-3' ;
+            columns.className = 'columns is-mobile is-cqentered has-background-white-ter has-text-grey-light mx-0 my-3' ;
 
             let center_column = document.createElement('div');
             center_column.className = 'column is-half  px-0 mx-0'; //half = 6
@@ -131,16 +125,19 @@
     <div class="columns is-desktop is-mobile is-centered">
         <div class="column is-half-desktop is-two-thirds-tablet is-11-mobile is-two-thirds-mobile">
             <div class="container has-background-info-light p-6 my-3" style="text-align: center;">
-                <h1 class="my-3">
+                <h4 class="my-3 is-size-5">
                     Point indsamlet i denne runde
-                </h1>
+                </h4>
                 <div class="inner_content">
                     <div class="is-size-1 my-5"><h2 id="points">0</h2></div>
                 </div>
                 <a id="new_round" class="button is-primary">
                     Start ny runde
                 </a>
+                <h3 class="is-size-7 mt-5 has-text-grey">Nuværende runde: <span id="runde_counter">1</span></h3>
+
             </div>
+            
             <div class="container" id="old_points"></div>
         </div>
     </div>
