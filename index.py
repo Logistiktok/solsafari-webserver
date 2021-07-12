@@ -17,7 +17,7 @@ app.url_map.strict_slashes = False #Fixes trailing slashes so they are redicrect
 
 @app.route('/')
 def hello_world():
-    return 'Hello, World!'
+    return 'GÅ til /app for at finde applicationen!'
 
 @app.route('/ajax', methods=['GET', 'POST'])
 def ajax():
