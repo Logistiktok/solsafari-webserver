@@ -12,56 +12,8 @@
     
     <script>
 
-
         let round_number = {{index_number}};
         let isPaused = {% if state %} true {% else %} false {% endif %};
-
-        function poll() {
-            setTimeout(() => {
-                ajax();
-            }, 500);
-        }
-
-        function ajax(){
-            $.ajax({
-                url: "/ajax/",   
-                success: function(result){
-                    let point = result["point"];
-                    let rounds = result["rounds"];
-                    let state = result["state"];
-                    let old_points = $("#points").html();
-
-                    if(point > 0) { //enable round button if there is points
-                        $("#new_round").attr("disabled", false); // enabled
-                    } else {
-                        $("#new_round").attr("disabled", true); // disabled
-                    }
-
-                    /* the points have changed to zero on the server, 
-                    it must be a new round so we addd it to the list 
-                    before we update */
-                    if(old_points > 0 && point === 0) { 
-                        add_round_element(round_number, old_points);
-                    }
-
-                    // if state from server is not state in app
-                    if(state != isPaused) {
-                        isPaused = state; //update app state
-                        update_play_button_ui();
-                    }
-
-                    $("#points").html(point);
-                    $("#runde_counter").html(rounds);
-                    round_number = rounds;
-
-            }, 
-                complete: function() {
-                    poll(); // start a new request when old complete
-                },
-                
-                timeout: 0,
-            });
-        }
 
         function reset(){
             $.ajax({             
@@ -156,7 +108,7 @@
         }
 
         $(document).ready(function(){
-            poll();
+            //poll();
 
             $("#new_round").click(function() {
                 if($("#points").html() !== '0') { //
@@ -169,7 +121,6 @@
             });
 
             $.post({
-                
                 url: "/rounds/",   
                 success: function(result){
                     write_old_points(result);
@@ -196,8 +147,9 @@
                 <h4 class="my-3 is-size-5">
                     Point indsamlet i denne runde
                 </h4>
-                <div class="inner_content">
-                    <div class="is-size-1 my-5"><h2 id="points">{{point}}</h2></div>
+                <div class="inner_content is-flex-direction-row">
+                    <div class="is-flex is-size-1 my-5"><h2 id="points">{{orange_hits}}</h2></div>
+                    <div class="is-flex is-size-1 my-5"><h2 id="points">{{blue_hits}}</h2></div>
                 </div>
                 <a id="play_pause" style="text-align:center;" class="button is-success is-fullwidth mb-5 p-6">
                     Start
