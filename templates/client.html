@@ -147,9 +147,21 @@
                 <h4 class="my-3 is-size-5">
                     Point indsamlet i denne runde
                 </h4>
-                <div class="inner_content is-flex-direction-row">
-                    <div class="is-flex is-size-1 my-5"><h2 id="points">{{orange_hits}}</h2></div>
-                    <div class="is-flex is-size-1 my-5"><h2 id="points">{{blue_hits}}</h2></div>
+                <div class="is-flex is-justify-content-center inner_content is-flex-direction-row">
+
+                    <div class="is-flex-direction-column is-justify-content-center">
+                        <div class="is-flex is-justify-content-center" style="color: orange">Orange</div>
+                        <div class="is-flex-wrap-wrap is-flex is-size-1 my-5 box mx-3 " style="background-color: orange;">
+                            <h2 id="orange_points" style="color: white;">{{orange_hits}}</h2>
+                        </div>
+                    </div>
+
+                    <div class="is-flex-direction-column is-justify-content-center">
+                        <div class="is-flex is-justify-content-center" style="color: orange">Blå</div>
+                        <div class="is-flex-wrap-wrap is-flex is-size-1 my-5 box mx-3" style="background-color: lightskyblue;">
+                            <h2 id="blue_points" style="color: white;">{{blue_hits}}</h2>
+                        </div>
+                    </div>
                 </div>
                 <a id="play_pause" style="text-align:center;" class="button is-success is-fullwidth mb-5 p-6">
                     Start
