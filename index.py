@@ -3,7 +3,6 @@ from flask import Flask
 from flask import request
 from flask import render_template
 from flask import Response
-from  flask_sock import Sock
 import json
 
 
@@ -24,15 +23,6 @@ app.url_map.strict_slashes = False #Fixes trailing slashes so they are redicrect
 def hello_world():
     return 'Gå til /app for at finde applicationen!'
 
-@sock.route('/updates')
-def updates(ws):
-    global orangeHits, blueHits
-    while True:
-        data = {'orange': orangeHits, 'blue': blueHits}
-        #data = ws.receive()
-        sleep(40)
-        ws.send(data)
-
 
 @app.route('/reset', methods=['GET', 'POST'])
 def reset():
@@ -42,13 +32,6 @@ def reset():
     blueHits = 0
     orangeHits = 0
     return "Ok"
-
-@sock.route('/echo')
-def echo(ws):
-    while True:
-        data = ws.receive()
-        ws.send(data)
-
 
 @app.route('/ajax', methods=['GET', 'POST'])
 def ajax():
