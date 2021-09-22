@@ -1,54 +1,55 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>SolSafari Point</title>
     <script src="{{ url_for('static', filename='lib/jquery.min.js')}}"></script>
 
-    <link rel="stylesheet"
-    href="{{ url_for('static', filename='lib/bulma.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/bulma.min.css') }}">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    
+
     <script>
 
-        let round_number = {{index_number}};
+        let round_number = {{ index_number }};
         let isPaused = {% if state %} true {% else %} false {% endif %};
 
-        function reset(){
-            $.ajax({             
-                url: "/reset/", 
+        function reset() {
+            $.ajax({
+                url: "/reset/",
                 success: (result) => {
-                    add_round_element(round_number, $("#points").html());
-                    $("#points").html("0");
+                    add_round_element(round_number, $("#blue_points").html(), $("#orange_points").html());
+                    $("#blue_points").html("0");
+                    $("#orange_points").html("0");
                     $("#new_round").attr("disabled", true); // button disabled
-                    round_number ++;
+                    round_number++;
                     $("#runde_counter").html(round_number);
-                }, 
+                },
                 timeout: 0,
             });
         }
 
-        function new_round(){
-            reset(); 
+        function new_round() {
+            reset();
         }
 
         function write_old_points(list) {
-            
+
             let liste = list["rounds"];
 
             let index = 1;
             liste.forEach(element => {
-                add_round_element(index, element);
+                add_round_element(index, element["blueHits"], element["orangeHits"]); //FIXME!!!!!!!
                 index++;
             });
 
         }
 
-        function add_round_element(index, value) {
+        function add_round_element(index, valueBlue, valueOrange) {
 
             let columns = document.createElement('div');
-            columns.className = 'columns is-mobile is-cqentered has-background-white-ter has-text-grey-light mx-0 my-3' ;
+            columns.className = 'columns is-mobile is-cqentered has-background-white-ter has-text-grey-light mx-0 my-3';
 
             let center_column = document.createElement('div');
             center_column.className = 'column is-half  px-0 mx-0'; //half = 6
@@ -60,15 +61,21 @@
             right_column.className = 'column px-0  mx-0'
 
             const left_content = document.createTextNode('Runde ' + index);
-            const center_content = document.createTextNode(value);
+            const center_content = document.createTextNode(valueOrange);
+            const right_content = document.createTextNode(valueBlue);
+
+            right_column.setAttribute('style', 'color: lightskyblue;');
+
 
             center_column.appendChild(center_content);
             left_column.appendChild(left_content);
+            right_column.appendChild(right_content);
+        
 
             //column.className = 'column has-background-grey-lighter m-2';
             //span.style.cssText = 'text-align: center;';
 
-            center_column.style.cssText = 'text-align:center;';
+            center_column.style.cssText = 'text-align:center; color: orange;';
 
             columns.appendChild(left_column);
             columns.appendChild(center_column);
@@ -82,20 +89,20 @@
 
             $.post({
                 url: "/statechange",
-                data: JSON.stringify({state: !isPaused}),
+                data: JSON.stringify({ state: !isPaused }),
                 contentType: 'application/json',
                 success: () => {
                     isPaused = !isPaused;
-                    update_play_button_ui(); 
+                    update_play_button_ui();
                 }
             }).fail(() => {
             });
 
-            
+
         }
 
         function update_play_button_ui() {
-            if(isPaused) {
+            if (isPaused) {
                 $('#play_pause').addClass('is-warning');
                 $('#play_pause').removeClass('is-success');
                 $('#play_pause').html("Start pointtælling");
@@ -107,12 +114,66 @@
             }
         }
 
-        $(document).ready(function(){
-            //poll();
+        function poll() {
+            setTimeout(() => {
+                ajax();
+            }, 500);
+        }
 
-            $("#new_round").click(function() {
-                if($("#points").html() !== '0') { //
-                    new_round(); 
+        function ajax(){
+            $.ajax({
+                url: "/ajax/",   
+                success: function(result){
+                    let blue_hits = result["blueHits"];
+                    let orange_hits = result["orangeHits"];
+                    let rounds = result["rounds"];
+                    let state = result["state"];
+                    
+                    let old_orange_hits = $("#points").html();
+                    let old_blue = $("#blue_points").html();
+                    let old_orange = $("#orange_points").html();
+                    
+                    let point = 0; //fixme: remove me after refactor = complete
+
+                    if(blue_hits > 0 || orange_hits > 0) { //enable round button if there is points
+                        $("#new_round").attr("disabled", false); // enabled
+                    } else {
+                        $("#new_round").attr("disabled", true); // disabled
+                    }
+
+                    /* the points have changed to zero on the server, 
+                    it must be a new round so we addd it to the list 
+                    before we update */
+                    if((old_blue > 0 && blue_hits === 0) && (old_orange > 0 && orange_hits === 0)) { 
+                        add_round_element(round_number, old_blue, old_orange);
+                    }
+
+                    // if state from server is not state in app
+                    if(state != isPaused) {
+                        isPaused = state; //update app state
+                        update_play_button_ui();
+                    }
+
+                    $("#blue_points").html(orange_hits);
+                    $("#orange_points").html(blue_hits);
+                    $("#runde_counter").html(rounds);
+                    round_number = rounds;
+
+            }, 
+                complete: function() {
+                    poll(); // start a new request when old complete
+                },
+                
+                timeout: 0,
+            });
+        }
+
+        $(document).ready(function () {
+            poll();
+
+            $("#new_round").click(function () {
+                if ($("#blue_points").html() !== '0' || $("#orange_points").html() !== '0') { //
+                    new_round();
                 }
             });
 
@@ -121,20 +182,21 @@
             });
 
             $.post({
-                url: "/rounds/",   
-                success: function(result){
+                url: "/rounds/",
+                success: function (result) {
                     write_old_points(result);
-            }, 
-                complete: function() {
-                    poll();
                 },
-                
+                complete: function () {
+                    //poll();
+                },
+
                 timeout: 0,
             });
 
             update_play_button_ui();
-        
+
         });
+
     </script>
 </head>
 
@@ -151,31 +213,35 @@
 
                     <div class="is-flex-direction-column is-justify-content-center">
                         <div class="is-flex is-justify-content-center" style="color: orange">Orange</div>
-                        <div class="is-flex-wrap-wrap is-flex is-size-1 my-5 box mx-3 " style="background-color: orange;">
+                        <div class="is-flex-wrap-wrap is-flex is-size-1 my-5 box mx-3 "
+                            style="background-color: orange;">
                             <h2 id="orange_points" style="color: white;">{{orange_hits}}</h2>
                         </div>
                     </div>
 
                     <div class="is-flex-direction-column is-justify-content-center">
-                        <div class="is-flex is-justify-content-center" style="color: orange">Blå</div>
-                        <div class="is-flex-wrap-wrap is-flex is-size-1 my-5 box mx-3" style="background-color: lightskyblue;">
+                        <div class="is-flex is-justify-content-center" style="color: lightskyblue">Blå</div>
+                        <div class="is-flex-wrap-wrap is-flex is-size-1 my-5 box mx-3"
+                            style="background-color: lightskyblue;">
                             <h2 id="blue_points" style="color: white;">{{blue_hits}}</h2>
                         </div>
                     </div>
                 </div>
                 <a id="play_pause" style="text-align:center;" class="button is-success is-fullwidth mb-5 p-6">
                     Start
-                </a>                
+                </a>
                 <a id="new_round" style="text-align:center;" class="button is-info p-5" disabled>
                     Ny Runde
                 </a>
-                <h3 class="is-size-7 mt-5 has-text-grey">Nuværende runde: <span id="runde_counter">{{index_number}}</span></h3>
+                <h3 class="is-size-7 mt-5 has-text-grey">Nuværende runde: <span
+                        id="runde_counter">{{index_number}}</span></h3>
 
             </div>
-            
+
             <div class="container" id="old_points"></div>
         </div>
     </div>
 
 </body>
+
 </html>

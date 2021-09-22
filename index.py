@@ -1,3 +1,4 @@
+from datetime import time
 from flask import Flask
 from flask import request
 from flask import render_template
@@ -15,6 +16,7 @@ is_paused_state = False
 
 
 app = Flask(__name__)
+sock = Sock(app)
 app.url_map.strict_slashes = False #Fixes trailing slashes so they are redicrected
 
 
@@ -22,26 +24,38 @@ app.url_map.strict_slashes = False #Fixes trailing slashes so they are redicrect
 def hello_world():
     return 'Gå til /app for at finde applicationen!'
 
+@sock.route('/updates')
+def updates(ws):
+    global orangeHits, blueHits
+    while True:
+        data = {'orange': orangeHits, 'blue': blueHits}
+        #data = ws.receive()
+        sleep(40)
+        ws.send(data)
 
 
 @app.route('/reset', methods=['GET', 'POST'])
 def reset():
     global point, rounds, current_round_number, orangeHits, blueHits
     current_round_number += 1
-    rounds.append(point)
+    rounds.append({"blueHits": blueHits, "orangeHits": orangeHits})
     blueHits = 0
     orangeHits = 0
     return "Ok"
 
+@sock.route('/echo')
+def echo(ws):
+    while True:
+        data = ws.receive()
+        ws.send(data)
 
-'''@app.route('/ajax', methods=['GET', 'POST'])
+
+@app.route('/ajax', methods=['GET', 'POST'])
 def ajax():
-    global point, current_round_number
-    data = {"point": point, "rounds": current_round_number, "state": is_paused_state}
-    return Response(json.dumps(data),  mimetype='application/json')'''
+    global orangeHits, blueHits, current_round_number
+    data = {"blueHits": blueHits, "orangeHits": orangeHits, "rounds": current_round_number, "state": is_paused_state}
+    return Response(json.dumps(data),  mimetype='application/json')
 
-
-''' 
 @app.route('/rounds', methods=['POST'])
 def save_rounds():
     global rounds
@@ -57,7 +71,6 @@ def statechange():
     state = json_data['state']
     is_paused_state = state
     return "ok"
-    '''
 
 
 @app.route('/app')
@@ -77,8 +90,8 @@ def assig_points():
             orangeHitsJson = round(json["orangeHits"]/2)
             blueHits = blueHits + blueHitsJson
             orangeHits = orangeHits + orangeHitsJson
-        print("blueHits" + str(blueHits))
-        print("orangeHits" + str(orangeHits))
+        #print("blueHits" + str(blueHits))
+        #print("orangeHits" + str(orangeHits))
         return "OK"
     else:
         return render_template('point.html', point=point)
