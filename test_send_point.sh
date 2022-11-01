@@ -7,7 +7,7 @@ do
 	ORD='{"orangeHits":'$HIT_NUMBER_ORANGE', "blueHits":'$HIT_NUMBER_BLUE'}'
 	echo "Sender Point: "$ORD
 
-	curl -X POST -H "Content-Type: application/json" -d '{"orangeHits":'$HIT_NUMBER_ORANGE', "blueHits":'$HIT_NUMBER_BLUE'}' http://localhost:5000/point  
+	curl -X POST -H "Content-Type: application/json" -d '{"orangeHits":'$HIT_NUMBER_ORANGE', "blueHits":'$HIT_NUMBER_BLUE'}' http://192.168.0.198:5000/point  
 	#{'orangeHits': 0, 'blueHits': 0}
 	echo "\n"
 	sleep 1
